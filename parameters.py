@@ -1,12 +1,14 @@
 import os
+from os.path import dirname, join, abspath
 
 # The download cells will store the data in nested directories starting here:
-HCP_DIR = "../hcp"
-
+HCP_DIR_NAME = "hcp"
+HCP_DIR = join(dirname(dirname(abspath(__file__))), HCP_DIR_NAME)
+print(HCP_DIR)
 # The data shared for NMA projects is a subset of the full HCP dataset
 N_SUBJECTS = 339
 
-# The data have already been aggregated into ROIs from the Glasesr parcellation
+# The data have already been aggregated into ROIs from the Glasser parcellation
 N_PARCELS = 360
 
 # The acquisition parameters for all tasks were identical
