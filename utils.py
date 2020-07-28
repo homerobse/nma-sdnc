@@ -124,7 +124,7 @@ def condition_frames(run_evs, skip=0):
         for hemodynamic lag
 
     Returns:
-      frames_list (list of 1D arrays): Flat arrays of frame indices, per run
+      frames_list (list of 1D arrays): List of flat arrays of frame indices, one per run
 
     """
     frames_list = []
