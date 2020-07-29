@@ -37,7 +37,7 @@ def get_image_ids(task):
     return run_ids
 
 
-def load_timeseries(subject, task, runs=None, concat=True, remove_mean=True):
+def load_timeseries(subject, task, runs=None, concat=True, remove_mean=True, remove_fixation=False):
     """Load timeseries data for a single subject.
 
     Args:
@@ -62,9 +62,12 @@ def load_timeseries(subject, task, runs=None, concat=True, remove_mean=True):
     offset = get_image_ids(task)[0]
 
     # Load each run's data
-    bold_data = [
-        load_single_timeseries(subject, offset + run, remove_mean) for run in runs
-    ]
+    if remove_mean and remove_fixation:
+        raise ValueError("Only one can be true among remove_mean and remove_fixation, not both.")
+    else:
+        bold_data = [
+            load_single_timeseries(subject, offset + run, remove_mean, remove_fixation) for run in runs
+        ]
 
     # Optionally concatenate in time
     if concat:
@@ -73,7 +76,7 @@ def load_timeseries(subject, task, runs=None, concat=True, remove_mean=True):
     return bold_data
 
 
-def load_single_timeseries(subject, bold_run, remove_mean=True):
+def load_single_timeseries(subject, bold_run, remove_mean=True, remove_fixation=False):
     """Load timeseries data for a single subject and single run.
 
     Args:
@@ -83,13 +86,24 @@ def load_single_timeseries(subject, bold_run, remove_mean=True):
 
     Returns
       ts (n_parcel x n_timepoint array): Array of BOLD data values
-
     """
+
     bold_path = f"{HCP_DIR}/subjects/{subject}/timeseries"
     bold_file = f"bold{bold_run}_Atlas_MSMAll_Glasser360Cortical.npy"
     ts = np.load(f"{bold_path}/{bold_file}")
-    if remove_mean:
+    n_frames = ts.shape[1]
+
+    if remove_mean and remove_fixation:
+        raise ValueError("Only one can be true among remove_mean and remove_fixation, not both.")
+    elif remove_mean:
         ts -= ts.mean(axis=1, keepdims=True)
+    elif remove_fixation:
+        frames = get_fixation_frames(subject)
+        fixation_bold = np.array([ts[:,i] for i in frames])
+        avg_fixation = np.mean(fixation_bold, axis=0, keepdims=True)
+
+        ts -= np.tile(avg_fixation.T, n_frames)
+
     return ts
 
 
@@ -237,3 +251,36 @@ def frames_df(task, conditions):
             frames_df = frames_df.append(df, ignore_index=True)
 
     return frames_df
+
+def get_fixation_frames(subject, run=0):
+    """
+    Get BOLD signal just for the frames of a specific subject, task and condition
+
+    Args:
+    subject (int): 0-based subject ID to load
+
+    Returns:
+    fixation_frames (): an array of frames corresponding to fixation times
+
+    """
+
+    trial_frames = np.append(condition_frames(load_evs(subject, 'wm', 'all_bk_cor'))[run],
+                             condition_frames(load_evs(subject, 'wm', 'all_bk_err'))[run])  # TODO: include no response trials
+    trial_frames = np.sort(trial_frames)
+
+    fixation_start = np.array([], dtype = int) # initialize
+
+    for idx,i in enumerate(trial_frames):
+        if idx == 0:
+            continue
+
+        # find frames with difference greater than 10s
+        if i - trial_frames[idx-1] > 10/TR:
+            fixation_start = np.append(fixation_start, trial_frames[idx-1])
+
+    fixation_duration = np.ceil(15/TR) # always 15s duration
+
+    # get range of frames corresponding to duration of fixation block
+    fixation_frames = np.concatenate([i+np.arange(0,fixation_duration, dtype=int) for i in fixation_start])
+
+    return fixation_frames
