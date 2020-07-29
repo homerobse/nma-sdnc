@@ -1,10 +1,10 @@
 import os
 from os.path import dirname, join, abspath
+import numpy as np
 
 # The download cells will store the data in nested directories starting here:
 HCP_DIR_NAME = "hcp"
 HCP_DIR = join(dirname(dirname(abspath(__file__))), HCP_DIR_NAME)
-print(HCP_DIR)
 # The data shared for NMA projects is a subset of the full HCP dataset
 N_SUBJECTS = 339
 
@@ -38,3 +38,10 @@ BOLD_NAMES = [
 # You may want to limit the subjects used during code development.
 # This will use all subjects:
 subjects = range(N_SUBJECTS)
+
+regions = np.load(f"{HCP_DIR}/regions.npy").T
+region_info = dict(
+    name=regions[0].tolist(),
+    network=regions[1],
+    myelin=regions[2].astype(np.float),
+)

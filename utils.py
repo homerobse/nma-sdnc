@@ -284,3 +284,13 @@ def get_fixation_frames(subject, run=0):
     fixation_frames = np.concatenate([i+np.arange(0,fixation_duration, dtype=int) for i in fixation_start])
 
     return fixation_frames
+
+
+def normalize_matrix(mat):
+    """
+    Normalize matrix elements so that they are contained in the [0,1] range
+    
+    :param mat: Matrix
+    :return: normalized matrix
+    """
+    return (mat + abs(mat.min())) / (mat.max() - mat.min())
