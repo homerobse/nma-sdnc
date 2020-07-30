@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from nilearn import plotting, datasets
 
-from parameters import HCP_DIR
+from parameters import atlas
 
 
 def plot_X(X, custom_title=None, vmin=None, vmax=None):
@@ -41,12 +42,11 @@ def plot_cross_validation_boxplot(accuracies, kfold):
     print(accuracies)
 
 
-from nilearn import plotting, datasets
-
 def plot_brain_visualization(parcels_bold):
+    """Plot brain activity map
+    :param parcels_bold: numpy array with one Bold activity signal for each parcel
+    """
     #TODO: THIS WAS NOT TESTED, IT PROBABLY DOES NOT WORK
-    with np.load(f"{HCP_DIR}/atlas.npz") as dobj:
-        atlas = dict(**dobj)
     fsaverage = datasets.fetch_surf_fsaverage()
     surf_contrast = parcels_bold[atlas["labels_L"]]
     plotting.view_surf(fsaverage['infl_left'],

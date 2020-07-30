@@ -45,3 +45,6 @@ region_info = dict(
     network=regions[1],
     myelin=regions[2].astype(np.float),
 )
+
+with np.load(f"{HCP_DIR}/hcp_atlas.npz") as dobj:
+    atlas = dict(**dobj)
