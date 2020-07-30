@@ -1,4 +1,4 @@
-# Taken from https://github.com/ansteeg/NeuroMatchProject/blob/master/source/hcp_regions.py 
+# Taken from https://github.com/ansteeg/NeuroMatchProject/blob/master/source/hcp_regions.py
 import os
 
 import pandas as pd

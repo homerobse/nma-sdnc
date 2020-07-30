@@ -39,7 +39,7 @@ y_run0 = np.concatenate(([0]*N_SUBJECTS*2,[1]*N_SUBJECTS*2, [2]*N_SUBJECTS*2, [3
 print("Finished separating BOLD signal using the task blocks.")
 
 
-# X_run0_train, X_run0_test, y_run0_train, y_run0_test  = train_test_split(X_run0, y_run0)
+X_train, X_test, y_train, y_test  = train_test_split(X_run0, y_run0, test_size=.2)
 
 # y_run1 = np.copy(y_run0)
 # X_run1_train, X_run1_test, y_run1_train, y_run1_test  = train_test_split(X_run1, y_run1)
@@ -58,7 +58,7 @@ print("Start regressions.")
 log_reg = LogisticRegression(penalty="none")
 
 #Then fit it to data
-log_reg.fit(X_run0, y_run0)
+log_reg.fit(X_train, y_train)
 
 coefs = np.copy(log_reg.coef_[0,:])
 #%%
@@ -73,23 +73,30 @@ for region_id in most_active_regions:
     print((splithemis, h.get_entry(splitreg)["AreaDescription"], coefs[region_id], region_info['network'][region_id]))
 
 
-acc_train = np.mean(log_reg.predict(X_run0)==y_run0)
+acc_train = np.mean(log_reg.predict(X_train)==y_train)
 print("Accuracy for training set =", acc_train)
 # predictions = log_reg.predict(X)
-# print("Accuracy for test set =", np.mean(log_reg.predict(X_test)==y_test))
+acc_test = np.mean(log_reg.predict(X_test)==y_test)
+print("Accuracy for test set =", )
+plt.figure()
+plt.title("Decoding accuracy: Training vs Test")
+plt.bar(["Training","Test"], [acc_train*100,100*acc_test])
+plt.ylabel("Accuracy (%)")
 
+#%%
 
 # Split across subjects
 kfold=4  # k-fold cross-validation
 accuracies = cross_val_score(log_reg, X_run0, y_run0, cv=kfold)
-
 plot_cross_validation_boxplot(accuracies, kfold)
 
 plt.show()
 
-fsaverage = datasets.fetch_surf_fsaverage()
-surf_coefs = coefs[atlas["labels_L"]]
-plotting.view_surf(fsaverage['infl_left'],
-                   surf_coefs)
-
-plotting.show()
+#%%
+# # code below not working if not in a notebook
+# fsaverage = datasets.fetch_surf_fsaverage()
+# surf_coefs = coefs[atlas["labels_L"]]
+# plotting.view_surf(fsaverage['infl_left'],
+#                    surf_coefs)
+#
+# plotting.show()

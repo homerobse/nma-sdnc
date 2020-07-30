@@ -39,7 +39,6 @@ def plot_cross_validation_boxplot(accuracies, kfold):
       title=f"Average test accuracy: {accuracies.mean():.2%}"
     )
     ax.spines["left"].set_visible(False)
-    print(accuracies)
 
 
 def plot_brain_visualization(parcels_bold):
