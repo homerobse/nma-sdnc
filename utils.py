@@ -2,6 +2,7 @@ from parameters import *
 import numpy as np
 import pandas as pd
 import os
+import pickle
 
 def download_data():
     #TODO: I think this is not working well, but it is not that important... We can download it manually
@@ -251,6 +252,19 @@ def frames_df(task, conditions):
             frames_df = frames_df.append(df, ignore_index=True)
 
     return frames_df
+
+
+def load_subjects_timeseries(from_originals=False):
+    if from_originals:
+        ts_wm_subjs = []
+        for subj in list(subjects):
+            ts_wm_subjs.append(load_timeseries(subj, 'wm', concat=True, remove_mean=True))
+    else:
+        with open(os.path.join(HCP_DIR, "ts_wm_subjs.pkl"), 'rb') as f:
+            ts_wm_subjs = pickle.load(f)
+    print("Subjects timeseries loaded.")
+    return ts_wm_subjs
+
 
 def get_fixation_frames(subject, run=0):
     """
