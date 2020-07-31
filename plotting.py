@@ -71,3 +71,47 @@ def plot_train_test_accuracy(log_reg, X_train, y_train, X_test, y_test):
     plt.ylabel("Accuracy (%)")
     autolabel(rect, ax)
 
+def plot_compared_accuracies(run0_train_run0_test, run0_train_run1_test, run0_train_mix_test, run1_train_run0_test, run1_train_run1_test,
+                             run1_train_mix_test, mix_train_run0_test, mix_train_run1_test, mix_train_mix_test):
+
+    labels = ['Run 0', 'Run 1', 'Mix']
+    run0_test = [run0_train_run0_test, run1_train_run0_test, mix_train_run0_test]
+    run1_test = [run0_train_run1_test, run1_train_run1_test, mix_train_run1_test]
+    mix_test = [run0_train_mix_test, run1_train_mix_test, mix_train_mix_test]
+
+    x = np.arange(len(labels))  # the label locations
+    width = 0.2  # the width of the bars
+
+    fig, ax = plt.subplots()
+    rects1 = ax.bar(x - width, run0_test, width, label='run 0 test')
+    # plt.subplot(132)
+    rects2 = ax.bar(x , run1_test, width, label='run 1 test')
+    # plt.subplot(133)
+    rects3 = ax.bar(x + width, mix_test, width, label='mix test')
+
+    # Add some text for labels, title and custom x-axis tick labels, etc.
+    ax.set_ylabel('Accuracy')
+    ax.set_xlabel('Training sets')
+    ax.set_title('Neural Network Results')
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels)
+    ax.legend()
+
+
+    def autolabel(rects):
+        """Attach a text label above each bar in *rects*, displaying its height."""
+        for rect in rects:
+            height = rect.get_height()
+            ax.annotate('{}'.format(height),
+                        xy=(rect.get_x() + rect.get_width() / 2, height),
+                        xytext=(0, 3),  # 3 points vertical offset
+                        textcoords="offset points",
+                        ha='center', va='bottom')
+
+
+    autolabel(rects1)
+    autolabel(rects2)
+    autolabel(rects3)
+
+    fig.tight_layout()
+    return fig
