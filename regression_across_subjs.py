@@ -13,15 +13,8 @@ from plotting import *
 from plotting import plot_cross_validation_boxplot, plot_brain_visualization
 from utils import *
 
-ts_wm_subjs = load_subjects_timeseries()
+ts_wm_subjs = load_subjects_timeseries(remove_fixation=False)
 
-def build_logistic_matrix(task_bold_timeseries_subjs, run, conditions):
-    n_conditions = len(conditions)
-    X = np.empty((N_SUBJECTS*n_conditions, N_PARCELS))
-    for subj in subjects:
-        for k, cond in enumerate(conditions):
-            X[k*N_SUBJECTS + subj, :] = get_condition_bold(subj, 'wm', cond, run, task_bold_timeseries_subjs[subj])
-    return X
 
 # # faces vs tools
 # conditions_faces_tools = ['2bk_faces', '0bk_faces', '2bk_tools', '0bk_tools']
@@ -32,9 +25,6 @@ def build_logistic_matrix(task_bold_timeseries_subjs, run, conditions):
 conditions_all = ['2bk_faces', '0bk_faces', '2bk_tools', '0bk_tools', '2bk_places', '0bk_places', '2bk_body', '0bk_body']
 X_run0 = build_logistic_matrix(ts_wm_subjs, run=0, conditions=conditions_all)
 y_run0 = np.concatenate(([0]*N_SUBJECTS*2,[1]*N_SUBJECTS*2, [2]*N_SUBJECTS*2, [3]*N_SUBJECTS*2))
-
-# X_run1 = np.empty((N_SUBJECTS*4, N_PARCELS))
-# build_logistic_matrix(ts_wm_subjs, run=1, conditions=conditions_faces_tools)
 
 print("Finished separating BOLD signal using the task blocks.")
 
@@ -72,16 +62,7 @@ for region_id in most_active_regions:
     splitreg = region_name.split("_")[1]
     print((splithemis, h.get_entry(splitreg)["AreaDescription"], coefs[region_id], region_info['network'][region_id]))
 
-
-acc_train = np.mean(log_reg.predict(X_train)==y_train)
-print("Accuracy for training set =", acc_train)
-# predictions = log_reg.predict(X)
-acc_test = np.mean(log_reg.predict(X_test)==y_test)
-print("Accuracy for test set =", )
-plt.figure()
-plt.title("Decoding accuracy: Training vs Test")
-plt.bar(["Training","Test"], [acc_train*100,100*acc_test])
-plt.ylabel("Accuracy (%)")
+plot_train_test_accuracy(log_reg, X_train, y_train, X_test, y_test)
 
 #%%
 
@@ -91,12 +72,3 @@ accuracies = cross_val_score(log_reg, X_run0, y_run0, cv=kfold)
 plot_cross_validation_boxplot(accuracies, kfold)
 
 plt.show()
-
-#%%
-# # code below not working if not in a notebook
-# fsaverage = datasets.fetch_surf_fsaverage()
-# surf_coefs = coefs[atlas["labels_L"]]
-# plotting.view_surf(fsaverage['infl_left'],
-#                    surf_coefs)
-#
-# plotting.show()

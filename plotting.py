@@ -45,9 +45,29 @@ def plot_brain_visualization(parcels_bold):
     """Plot brain activity map
     :param parcels_bold: numpy array with one Bold activity signal for each parcel
     """
-    #TODO: THIS WAS NOT TESTED, IT PROBABLY DOES NOT WORK
     fsaverage = datasets.fetch_surf_fsaverage()
-    surf_contrast = parcels_bold[atlas["labels_L"]]
+    surf_parcels_bold = parcels_bold[atlas["labels_L"]]
     plotting.view_surf(fsaverage['infl_left'],
-                       surf_contrast,
-                       vmax=15)
+                       surf_parcels_bold)
+
+
+def plot_train_test_accuracy(log_reg, X_train, y_train, X_test, y_test):
+    acc_train = np.mean(log_reg.predict(X_train)==y_train)
+    acc_test = np.mean(log_reg.predict(X_test)==y_test)
+
+    def autolabel(rects, ax):
+        """Attach a text label above each bar in *rects*, displaying its height."""
+        for rect in rects:
+            height = rect.get_height()
+            ax.annotate('%.1f' % height,
+                        xy=(rect.get_x() + rect.get_width() / 2, height),
+                        xytext=(0, 3),  # 3 points vertical offset
+                        textcoords="offset points",
+                        ha='center', va='bottom')
+
+    fig, ax = plt.subplots()
+    plt.title("Decoding accuracy: Training vs Test")
+    rect = plt.bar(["Training","Test"], [100*acc_train,100*acc_test])
+    plt.ylabel("Accuracy (%)")
+    autolabel(rect, ax)
+

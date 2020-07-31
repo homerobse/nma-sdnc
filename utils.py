@@ -254,11 +254,11 @@ def frames_df(task, conditions):
     return frames_df
 
 
-def load_subjects_timeseries(from_originals=False):
+def load_subjects_timeseries(from_originals=False, remove_mean=True, remove_fixation=False):
     if from_originals:
         ts_wm_subjs = []
         for subj in list(subjects):
-            ts_wm_subjs.append(load_timeseries(subj, 'wm', concat=True, remove_mean=True))
+            ts_wm_subjs.append(load_timeseries(subj, 'wm', concat=True, remove_mean=remove_mean, remove_fixation=remove_fixation))
     else:
         with open(os.path.join(HCP_DIR, "ts_wm_subjs.pkl"), 'rb') as f:
             ts_wm_subjs = pickle.load(f)
@@ -308,3 +308,12 @@ def normalize_matrix(mat):
     :return: normalized matrix
     """
     return (mat + abs(mat.min())) / (mat.max() - mat.min())
+
+
+def build_logistic_matrix(task_bold_timeseries_subjs, run, conditions):
+    n_conditions = len(conditions)
+    X = np.empty((N_SUBJECTS*n_conditions, N_PARCELS))
+    for subj in subjects:
+        for k, cond in enumerate(conditions):
+            X[k*N_SUBJECTS + subj, :] = get_condition_bold(subj, 'wm', cond, run, task_bold_timeseries_subjs[subj])
+    return X
