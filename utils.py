@@ -159,7 +159,7 @@ def condition_frames(run_evs, skip=0):
     return frames_list
 
 
-def get_condition_bold(subject, task, condition, run, task_bold_timeseries):
+def get_condition_bold(subject, task, condition, run, task_bold_timeseries='', average=True):
     """
     Get BOLD signal just for the frames of a specific subject, task and condition
 
@@ -172,12 +172,19 @@ def get_condition_bold(subject, task, condition, run, task_bold_timeseries):
     Returns:
     condition_bold_timeseries (np.ndarray size (n_parcels,) ): average BOLD signal across block
     """
+    if not task_bold_timeseries:
+        task_bold_timeseries = load_single_timeseries(subject,get_image_ids(task)[0]+run)
+        
     frames = condition_frames(load_evs(subject,task,condition))[run]
 
-    start_idx = frames.min()
-    end_idx = frames.max()+1
-
-    condition_bold_timeseries = np.mean(task_bold_timeseries[:,start_idx:end_idx], axis=1)
+    start_idx = int(frames.min())
+    end_idx = int(frames.max()+1)
+    if average == False:
+        condition_bold_timeseries = task_bold_timeseries[:,start_idx:end_idx]
+    else:
+        condition_bold_timeseries = task_bold_timeseries[:,start_idx:end_idx]
+        condition_bold_timeseries = np.mean(condition_bold_timeseries, axis =1)
+    
     return condition_bold_timeseries
 
 
