@@ -182,7 +182,7 @@ def get_condition_bold(subject, task, condition, run, task_bold_timeseries='', a
 
     """
     if not task_bold_timeseries:
-        task_bold_timeseries = load_single_timeseries(subject,7+run)
+        task_bold_timeseries = load_single_timeseries(subject,get_image_ids(task)[0]+run)
         
     frames = condition_frames(load_evs(subject,task,condition))[run]
 
