@@ -5,7 +5,7 @@ import os
 import pickle
 
 def download_data():
-    #TODO: I think this is not working well, but it is not that important... We can download it manually
+    # TODO: I think this is not working well, but it is not that important... We can download it manually
 
     if not os.path.isdir(HCP_DIR):
         os.mkdir(HCP_DIR)
@@ -28,7 +28,6 @@ def get_image_ids(task):
         task (str) : Task of experiment ("rest" or name of task) to load
       Returns:
         run_ids (list of int) : Numeric ID for experiment image files
-
     """
     run_ids = [
         i for i, code in enumerate(BOLD_NAMES, 1) if task.upper() in code
@@ -51,7 +50,6 @@ def load_timeseries(subject, task, runs=None, concat=True, remove_mean=True, rem
 
     Returns
       ts (n_parcel x n_tp array): Array of BOLD data values
-
     """
     # Get the list relative 0-based index of runs to use
     if runs is None:
@@ -84,7 +82,6 @@ def load_single_timeseries(subject, bold_run, remove_mean=True, remove_fixation=
       subject (int): 0-based subject ID to load
       bold_run (int): 1-based run index, across all tasks
       remove_mean (bool): If True, subtract the parcel-wise mean
-
     Returns
       ts (n_parcel x n_timepoint array): Array of BOLD data values
     """
@@ -100,7 +97,7 @@ def load_single_timeseries(subject, bold_run, remove_mean=True, remove_fixation=
         ts -= ts.mean(axis=1, keepdims=True)
     elif remove_fixation:
         frames = get_fixation_frames(subject)
-        fixation_bold = np.array([ts[:,i] for i in frames])
+        fixation_bold = np.array([ts[:, i] for i in frames])
         avg_fixation = np.mean(fixation_bold, axis=0, keepdims=True)
 
         ts -= np.tile(avg_fixation.T, n_frames)
@@ -115,11 +112,9 @@ def load_evs(subject, name, condition):
       subject (int): 0-based subject ID to load
       name (str) : Name of task
       condition (str) : Name of condition
-
     Returns
       evs (list of dicts): A dictionary with the onset, duration, and amplitude
         of the condition for each run.
-
     """
     evs = []
     for id in get_image_ids(name):
@@ -137,10 +132,8 @@ def condition_frames(run_evs, skip=0):
       run_evs (list of dicts) : Onset and duration of the event, for each run
       skip (int) : Ignore this many frames at the start of each trial, to account
         for hemodynamic lag
-
     Returns:
       frames_list (list of 1D arrays): List of flat arrays of frame indices, one per run
-
     """
     frames_list = []
     for ev in run_evs:  # loop through runs
@@ -174,12 +167,10 @@ def get_condition_bold(subject, task, condition, run, task_bold_timeseries):
     subject (int): subject id
     task (str): e.g. "wm"
     condition (str): e.g. "2bk_faces"
-    run (int): id of run
+    run (int): id of run (0 or 1)
     task_bold_timeseries (np.ndarray size (n_parcels, n_frames)) : BOLD timesires of all frames of a task for all parcels
-
     Returns:
     condition_bold_timeseries (np.ndarray size (n_parcels,) ): average BOLD signal across block
-
     """
     frames = condition_frames(load_evs(subject,task,condition))[run]
 
@@ -198,11 +189,9 @@ def selective_average(timeseries_data, ev, skip=0):
       ev (dict or list of dicts): Condition timing information
       skip (int) : Ignore this many frames at the start of each trial, to account
         for hemodynamic lag
-
     Returns:
       avg_data (1D array): Data averagted across selected image frames based
       on condition timing
-
     """
     # Ensure that we have lists of the same length
     if not isinstance(timeseries_data, list):
@@ -234,7 +223,6 @@ def frames_df(task, conditions):
     task: 'wm' in our case
     conditions: can be a single string or list of strings with which conditions to
         include in dataframe (e.g. ['0bk_faces', '2bk_faces', '0bk_err'])
-
     Returns:
         frames_df (pandas DataFrame): has one column with lists of frames
     """
@@ -255,6 +243,13 @@ def frames_df(task, conditions):
 
 
 def load_subjects_timeseries(from_originals=False, remove_mean=True, remove_fixation=False):
+    """ Load timeseries for all subjects into a list. Either from original files or from a pickle file
+
+    :param from_originals: If True, will load from original files and build list
+    :param remove_mean: If True, will remove mean from the whole recording
+    :param remove_fixation: If True, will remove mean activity from fixation trials.
+    :return: List of timeseries, one per subject
+    """
     if from_originals:
         ts_wm_subjs = []
         for subj in list(subjects):
@@ -272,30 +267,28 @@ def get_fixation_frames(subject, run=0):
 
     Args:
     subject (int): 0-based subject ID to load
-
     Returns:
     fixation_frames (): an array of frames corresponding to fixation times
-
     """
 
     trial_frames = np.append(condition_frames(load_evs(subject, 'wm', 'all_bk_cor'))[run],
                              condition_frames(load_evs(subject, 'wm', 'all_bk_err'))[run])  # TODO: include no response trials
     trial_frames = np.sort(trial_frames)
 
-    fixation_start = np.array([], dtype = int) # initialize
+    fixation_start = np.array([], dtype=int)  # initialize
 
-    for idx,i in enumerate(trial_frames):
+    for idx, i in enumerate(trial_frames):
         if idx == 0:
             continue
 
         # find frames with difference greater than 10s
-        if i - trial_frames[idx-1] > 10/TR:
-            fixation_start = np.append(fixation_start, trial_frames[idx-1])
+        if i - trial_frames[idx - 1] > 10 / TR:
+            fixation_start = np.append(fixation_start, trial_frames[idx - 1])
 
-    fixation_duration = np.ceil(15/TR) # always 15s duration
+    fixation_duration = np.ceil(15 / TR)  # always 15s duration
 
     # get range of frames corresponding to duration of fixation block
-    fixation_frames = np.concatenate([i+np.arange(0,fixation_duration, dtype=int) for i in fixation_start])
+    fixation_frames = np.concatenate([i + np.arange(0, fixation_duration, dtype=int) for i in fixation_start])
 
     return fixation_frames
 
@@ -303,7 +296,7 @@ def get_fixation_frames(subject, run=0):
 def normalize_matrix(mat):
     """
     Normalize matrix elements so that they are contained in the [0,1] range
-    
+
     :param mat: Matrix
     :return: normalized matrix
     """
@@ -312,8 +305,8 @@ def normalize_matrix(mat):
 
 def build_logistic_matrix(task_bold_timeseries_subjs, run, conditions):
     n_conditions = len(conditions)
-    X = np.empty((N_SUBJECTS*n_conditions, N_PARCELS))
+    X = np.empty((N_SUBJECTS * n_conditions, N_PARCELS))
     for subj in subjects:
         for k, cond in enumerate(conditions):
-            X[k*N_SUBJECTS + subj, :] = get_condition_bold(subj, 'wm', cond, run, task_bold_timeseries_subjs[subj])
+            X[k * N_SUBJECTS + subj, :] = get_condition_bold(subj, 'wm', cond, run, task_bold_timeseries_subjs[subj])
     return X
