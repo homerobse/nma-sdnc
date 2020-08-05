@@ -169,11 +169,12 @@ def get_condition_bold(subject, task, condition, run, task_bold_timeseries='', a
     condition (str): e.g. "2bk_faces"
     run (int): id of run (0 or 1)
     task_bold_timeseries (np.ndarray size (n_parcels, n_frames)) : BOLD timesires of all frames of a task for all parcels
+    average (bool): if True, returns the average bold of the condition frames
     Returns:
     condition_bold_timeseries (np.ndarray size (n_parcels,) ): average BOLD signal across block
     """
-    if not task_bold_timeseries:
-        task_bold_timeseries = load_single_timeseries(subject,get_image_ids(task)[0]+run)
+    if task_bold_timeseries == '':
+        task_bold_timeseries = load_single_timeseries(subject, get_image_ids(task)[0]+run)
         
     frames = condition_frames(load_evs(subject,task,condition))[run]
 
@@ -310,10 +311,10 @@ def normalize_matrix(mat):
     return (mat + abs(mat.min())) / (mat.max() - mat.min())
 
 
-def build_logistic_matrix(task_bold_timeseries_subjs, run, conditions):
+def build_logistic_matrix(run, conditions):
     n_conditions = len(conditions)
     X = np.empty((N_SUBJECTS * n_conditions, N_PARCELS))
     for subj in subjects:
         for k, cond in enumerate(conditions):
-            X[k * N_SUBJECTS + subj, :] = get_condition_bold(subj, 'wm', cond, run, task_bold_timeseries_subjs[subj])
+            X[k * N_SUBJECTS + subj, :] = get_condition_bold(subj, 'wm', cond, run)
     return X

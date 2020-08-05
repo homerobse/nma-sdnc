@@ -13,15 +13,15 @@ from plotting import *
 from plotting import plot_cross_validation_boxplot, plot_brain_visualization
 from utils import *
 
-ts_wm_subjs = load_subjects_timeseries(remove_fixation=False)
+# ts_wm_subjs = load_subjects_timeseries(remove_fixation=False)
 
 
 # faces, tools, places, body
 conditions_all = ['2bk_faces', '0bk_faces', '2bk_tools', '0bk_tools', '2bk_places', '0bk_places', '2bk_body', '0bk_body']
-X_run0 = build_logistic_matrix(ts_wm_subjs, run=0, conditions=conditions_all)
+X_run0 = build_logistic_matrix(run=0, conditions=conditions_all)
 y_run0 = np.concatenate(([0]*N_SUBJECTS*2,[1]*N_SUBJECTS*2, [2]*N_SUBJECTS*2, [3]*N_SUBJECTS*2))
 
-X_run1 = build_logistic_matrix(ts_wm_subjs, run=1, conditions=conditions_all)
+X_run1 = build_logistic_matrix(run=1, conditions=conditions_all)
 y_run1 = np.copy(y_run0)
 
 X_run0_train, X_run0_test, y_run0_train, y_run0_test  = train_test_split(X_run0, y_run0, test_size=.2)
