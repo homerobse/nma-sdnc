@@ -1,0 +1,44 @@
+### Faces 
+FFC Right Fusiform Face Complex 0.4445480496739031 Visual2
+FFC Left Fusiform Face Complex 0.420749364242728 Visual2
+PIT Right Posterior InferoTemporal Complex 0.25623537733176727 Visual2
+VMV1 Left VentroMedial Visual Area 1 0.2110665525886568 Visual2
+PIT Left Posterior InferoTemporal Complex 0.17464645514550284 Visual2
+TPOJ2 Right Area TemporoParietoOcci pital Junction 2 0.14746914708563189 Dorsal-atten
+TPOJ1 Left Area TemporoParietoOcci pital Junction 1 0.14049248183971214 Default
+10d Right Area 10d 0.1321026167385156 Posterior-Mu
+TPOJ1 Right Area TemporoParietoOcci pital Junction 1 0.1235786837800947 Default
+MST Right Medial Superior Temporal Area 0.12104086430184645 Visual2
+### Tools 
+VMV3 Right VentroMedial Visual Area 3 0.3122534371647703 Visual2
+VVC Left Ventral Visual Complex 0.26263826621595976 Visual2
+PH Left Area PH 0.243561832605646 Visual2
+V1 Left Primary Visual Cortex 0.2389731286181347 Visual1
+FST Left Area FST 0.22907467839677495 Visual2
+VVC Right Ventral Visual Complex 0.2190609028556454 Visual2
+PHA3 Left ParaHippocampal Area 3 0.20058102782643844 Language
+LO1 Left Area Lateral Occipital 1 0.19468432901569593 Visual2
+V1 Right Primary Visual Cortex 0.19237329224394767 Visual1
+IFSa Left Area IFSa 0.17578425011380558 Cingulo-Oper
+### Places 
+VMV2 Right VentroMedial Visual Area 2 0.3176957419356145 Visual2
+DVT Right Dorsal Transitional Visual Area 0.2574696406076738 Visual1
+POS1 Right Parieto-Occipital Sulcus Area 1 0.25219798947234123 Posterior-Mu
+POS1 Left Parieto-Occipital Sulcus Area 1 0.22663335425704625 Posterior-Mu
+VMV2 Left VentroMedial Visual Area 2 0.22399672324610434 Visual2
+V3CD Left Area V3CD 0.2087147319880911 Visual2
+V3CD Right Area V3CD 0.20616559452623354 Visual2
+PGp Left Area PGp 0.2055013733416888 Language
+PGp Right Area PGp 0.1854009321573292 Language
+VMV3 Right VentroMedial Visual Area 3 0.18237147472519638 Visual2
+### Body 
+PH Right Area PH 0.3098947042280749 Visual2
+FST Right Area FST 0.3062834270222431 Visual2
+V4t Left Area V4t 0.23507912974734452 Visual2
+LO3 Right Area Lateral Occipital 3 0.20964356413354537 Visual2
+IPS1 Right IntraParietal Sulcus Area 1 0.20468828251832008 Visual2
+PH Left Area PH 0.18722423318239254 Visual2
+V4t Right Area V4t 0.18168993783526577 Visual2
+LO1 Right Area Lateral Occipital 1 0.1696444520782877 Visual2
+FST Left Area FST 0.15380812394703441 Visual2
+LO2 Left Area Lateral Occipital 2 0.141380587140448 Visual2
