@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
+from matplotlib import rcParams
 import numpy as np
 from nilearn import plotting, datasets
-
 from parameters import atlas
 
 
@@ -73,11 +73,18 @@ def plot_train_test_accuracy(log_reg, X_train, y_train, X_test, y_test):
 
 def plot_compared_accuracies(run0_train_run0_test, run0_train_run1_test, run0_train_mix_test, run1_train_run0_test, run1_train_run1_test,
                              run1_train_mix_test, mix_train_run0_test, mix_train_run1_test, mix_train_mix_test):
+    rcParams['axes.spines.right'] = False
+    rcParams['axes.spines.top'] = False
+    rcParams['axes.titlesize'] = "xx-large"
+    rcParams['axes.labelsize'] = "x-large"
+    rcParams['xtick.labelsize'] = "x-large"
+    rcParams['ytick.labelsize'] = "x-large"
+    rcParams['legend.fontsize'] = "x-large"
 
     labels = ['Run 0', 'Run 1', 'Mix']
-    run0_test = [run0_train_run0_test, run1_train_run0_test, mix_train_run0_test]
-    run1_test = [run0_train_run1_test, run1_train_run1_test, mix_train_run1_test]
-    mix_test = [run0_train_mix_test, run1_train_mix_test, mix_train_mix_test]
+    run0_test = [100*run0_train_run0_test, 100*run1_train_run0_test, 100*mix_train_run0_test]
+    run1_test = [100*run0_train_run1_test, 100*run1_train_run1_test, 100*mix_train_run1_test]
+    mix_test = [100*run0_train_mix_test, 100*run1_train_mix_test, 100*mix_train_mix_test]
 
     x = np.arange(len(labels))  # the label locations
     width = 0.2  # the width of the bars
@@ -90,23 +97,23 @@ def plot_compared_accuracies(run0_train_run0_test, run0_train_run1_test, run0_tr
     rects3 = ax.bar(x + width, mix_test, width, label='mix test')
 
     # Add some text for labels, title and custom x-axis tick labels, etc.
-    ax.set_ylabel('Accuracy')
+    ax.set_ylabel('Accuracy (%)')
     ax.set_xlabel('Training sets')
-    ax.set_title('Neural Network Results')
+    ax.set_title('Accuracy comparison')
     ax.set_xticks(x)
     ax.set_xticklabels(labels)
-    ax.legend()
+    ax.legend(bbox_to_anchor=(1,1), loc="upper right")
 
 
     def autolabel(rects):
         """Attach a text label above each bar in *rects*, displaying its height."""
         for rect in rects:
             height = rect.get_height()
-            ax.annotate('{}'.format(height),
+            ax.annotate('%.1f' % height,
                         xy=(rect.get_x() + rect.get_width() / 2, height),
                         xytext=(0, 3),  # 3 points vertical offset
                         textcoords="offset points",
-                        ha='center', va='bottom')
+                        ha='center', va='bottom', fontsize="x-large")
 
 
     autolabel(rects1)
